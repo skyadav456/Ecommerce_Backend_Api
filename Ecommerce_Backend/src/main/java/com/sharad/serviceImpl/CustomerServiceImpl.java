@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.sharad.entity.Customer;
 import com.sharad.exception.CustomerNotFoundException;
 import com.sharad.exception.EmailAlreadyExistsException;
@@ -35,7 +34,7 @@ public class CustomerServiceImpl  implements CustomerService {
 													new CustomerNotFoundException("Invalid email or password"));
 		if(!customer.getPassword().equals(password)) {
 			throw new CustomerNotFoundException("Invalid email or password");
-		}
+		} 
 		return customer;
 	}
 

@@ -29,7 +29,6 @@ public class ProductServiceImpl implements ProductService {
     public Product addProduct(Product product) {
 
         Long categoryId = product.getCategory().getCategoryId();
-
         ProductCategory category = categoryRepo.findById(categoryId)
                 .orElseThrow(() -> new CategoryNotFoundException(categoryId));
 
