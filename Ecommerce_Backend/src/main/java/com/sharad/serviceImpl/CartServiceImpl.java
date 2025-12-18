@@ -87,17 +87,18 @@ public class CartServiceImpl implements CartService {
 			cart.getItems().add(newItem);
 		}
 		// Update cart total price
-		recalculateCartTotal(cart);
+		calculateNewCartTotal(cart);
 		// Save cart and return
 		return cartRepo.save(cart);
 	}
 
+	// Remove product from cart
 	@Override
 	public Cart removeProductFromCart(Long customerId, Long productId) {
 		Cart cart = getOrCreateCart(customerId);
 		cart.getItems().removeIf(item->item.getProduct().getProductId().equals(productId));
 		// Update cart total price
-		recalculateCartTotal(cart);
+		calculateNewCartTotal(cart);
 		// Save cart and return
 		return cartRepo.save(cart);
 	}
@@ -112,12 +113,42 @@ public class CartServiceImpl implements CartService {
 	}
 	
 	// Update cart total price
-	 private void recalculateCartTotal(Cart cart) {
+	 private void calculateNewCartTotal(Cart cart) {
 		 BigDecimal totalPrice = cart.getItems().stream()
 					.map(CartItem::getSubtotal)
 					.reduce(BigDecimal.ZERO, BigDecimal::add);
 			cart.setTotalPrice(totalPrice);
 
 	    }
+
+	 //  Update product quantity in cart
+	 @Override
+	 public Cart updateProductQuantity(Long customerId, Long productId, int quantity) {
+		Cart cart = getOrCreateCart(customerId);
+		Optional<CartItem> item = cart.getItems().stream().filter(items->items.getProduct().getProductId().equals(productId)).findFirst();
+		if(item.isEmpty()) {
+			throw new ProductNotFoundException(productId);
+		}else {
+			if(quantity<=0) {
+				throw new IllegalArgumentException("Quantity can not be negative or zero");
+			}else {
+				CartItem cartItem = item.get();
+				cartItem.setQuantity(quantity);
+				cartItem.setSubtotal(cartItem.getUnitPrice().multiply(BigDecimal.valueOf(quantity)));
+				// Update cart total price
+				calculateNewCartTotal(cart);
+				return cartRepo.save(cart);
+			}
+		}
+	 }
+
+	 // Clear cart
+	 @Override
+	 public Cart clearCart(Long customerId) {
+		Cart cart = getOrCreateCart(customerId);
+		cart.getItems().clear();
+		cart.setTotalPrice(BigDecimal.ZERO);
+		return cartRepo.save(cart);
+	 }
 
 }

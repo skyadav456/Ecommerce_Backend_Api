@@ -8,5 +8,8 @@ public interface CartService {
    Cart addProductToCart(Long customerId, Long productId, int quantity);
    Cart removeProductFromCart(Long customerId, Long productId);
    Cart viewCart(Long customerId);
+   // Enhancement: Update product quantity in cart
+   Cart updateProductQuantity(Long customerId, Long productId, int quantity);
+   Cart clearCart(Long customerId);
 
 }
