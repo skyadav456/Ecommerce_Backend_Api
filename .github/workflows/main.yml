@@ -21,5 +21,6 @@ jobs:
           java-version: '17'
 
       - name: Build & Test with Maven
+        working-directory: Ecommerce_Backend
         run: mvn clean test
 
