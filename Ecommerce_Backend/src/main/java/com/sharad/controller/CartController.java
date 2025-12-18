@@ -56,7 +56,7 @@ public class CartController {
 	}
 	
 	/*Clear Cart
-	http://localhost:8080/api/cart/customer/1/clear		    --> API Endpoint
+	http://localhost:8080/api/cart/customer/1/clear		 
 	*/
 	@DeleteMapping("/customer/{customerId}/clear")
 	public Cart clearCart(@PathVariable Long customerId) {
