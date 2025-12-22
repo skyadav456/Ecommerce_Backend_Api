@@ -72,7 +72,9 @@ public class OrderSericeImpl implements OrderService {
 			orderItem.setUnitPrice(cartItem.getProduct().getUnitPrice());
 			orderItem.setSubtotal(cartItem.getSubtotal());
 			// calculate total amount
-			totalAmount= totalAmount.add(cartItem.getSubtotal());
+//			totalAmount= totalAmount.add(cartItem.getSubtotal());
+			totalAmount= totalAmount.add(orderItem.getSubtotal());
+			order.setTotalAmount(totalAmount);
 			order.getItems().add(orderItem);    // add order item to order
 		}
 		// save order
@@ -81,6 +83,7 @@ public class OrderSericeImpl implements OrderService {
 		cart.getItems().clear();
 		cart.setStatus("CLOSED");
 		cart.setTotalPrice(BigDecimal.ZERO);
+		
 		cartRepository.save(cart);
 		// return order
 		return savedOrder;

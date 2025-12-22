@@ -25,8 +25,8 @@ public class OrderController {
 		return orderService.placeOrder(customerId, addressId);
 	}
 	
-	/*
-	 * http://localhost:8080/orders/customer/1
+/*
+ * http://localhost:8080/orders/customer/1
 	*/	
 	@GetMapping("/customer/{customerId}")
 	public List<Order> getOrdersByCustomerId(@PathVariable Long customerId) {
