@@ -1,6 +1,7 @@
 package com.sharad.serviceImpl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,6 @@ import com.sharad.entity.Customer;
 import com.sharad.entity.Product;
 import com.sharad.exception.CustomerNotFoundException;
 import com.sharad.exception.ProductNotFoundException;
-import com.sharad.handler.GlobalExceptionHandler;
 import com.sharad.repository.CartItemRepository;
 import com.sharad.repository.CartRepository;
 import com.sharad.repository.CustomerRepository;
@@ -22,8 +22,6 @@ import com.sharad.service.CartService;
 @Service
 public class CartServiceImpl implements CartService {
 
-	@Autowired
-    private GlobalExceptionHandler globalExceptionHandler;
 	
 	@Autowired
 	private CartRepository cartRepo;
@@ -34,9 +32,9 @@ public class CartServiceImpl implements CartService {
 	@Autowired
 	private ProductRepository productRepo;
 
-	/*    CartServiceImpl(GlobalExceptionHandler globalExceptionHandler) {
-	    this.globalExceptionHandler = globalExceptionHandler;
-	}*/
+	
+	
+	
 
 	@Override
 	public Cart getOrCreateCart(Long customerId) {
@@ -51,6 +49,7 @@ public class CartServiceImpl implements CartService {
 			Cart newCart = new Cart();
 			newCart.setCustomer(customer);
 			newCart.setTotalPrice(BigDecimal.ZERO);
+			newCart.setStatus("ACTIVE");
 			return cartRepo.save(newCart);
 		}
 	}
@@ -64,11 +63,20 @@ public class CartServiceImpl implements CartService {
 		
 		// get the cart
 		Cart cart = getOrCreateCart(customerId);
+		if (cart.getItems() == null) {
+	        cart.setItems(new ArrayList<>());
+	    }
 		// get the product
 		Product product =productRepo.findById(productId).orElseThrow(()->
 				new ProductNotFoundException( productId));
 		
-		Optional<CartItem> existCartItem = cartItemRepo.findByCartAndProduct(cart,product);
+//		Optional<CartItem> existCartItem = cartItemRepo.findByCartAndProduct(cart,product);
+		Optional<CartItem> existCartItem =
+	            cart.getItems().stream()
+	                .filter(item ->
+	                    item.getProduct().getProductId().equals(productId))
+	                .findFirst();
+		
 		if(existCartItem.isPresent()) {
 			//Product already in cart → increase quantity and subtotal
 			CartItem item =existCartItem.get();

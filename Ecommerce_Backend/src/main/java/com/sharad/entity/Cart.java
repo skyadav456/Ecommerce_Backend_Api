@@ -1,6 +1,7 @@
 package com.sharad.entity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -29,7 +30,7 @@ public class Cart {
     private Customer customer;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL,orphanRemoval = true )
-    private List<CartItem> items;
+    private List<CartItem> items= new ArrayList<>();
 
     private BigDecimal totalPrice;;
 
