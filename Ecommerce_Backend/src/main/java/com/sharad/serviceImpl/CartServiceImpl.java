@@ -68,7 +68,7 @@ public class CartServiceImpl implements CartService {
 	    }
 		// get the product
 		Product product =productRepo.findById(productId).orElseThrow(()->
-				new ProductNotFoundException( productId));
+				new ProductNotFoundException("Product not found with id:"+productId));
 		
 //		Optional<CartItem> existCartItem = cartItemRepo.findByCartAndProduct(cart,product);
 		Optional<CartItem> existCartItem =
@@ -135,7 +135,7 @@ public class CartServiceImpl implements CartService {
 		Cart cart = getOrCreateCart(customerId);
 		Optional<CartItem> item = cart.getItems().stream().filter(items->items.getProduct().getProductId().equals(productId)).findFirst();
 		if(item.isEmpty()) {
-			throw new ProductNotFoundException(productId);
+			throw new ProductNotFoundException("product not found with id : "+productId);
 		}else {
 			if(quantity<=0) {
 				throw new IllegalArgumentException("Quantity can not be negative or zero");
