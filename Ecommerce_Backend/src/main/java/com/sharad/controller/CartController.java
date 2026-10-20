@@ -1,7 +1,8 @@
 package com.sharad.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import com.sharad.dto.CartResponseDto;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,48 +20,52 @@ import com.sharad.service.CartService;
 //@CrossOrigin(origins = "http://localhost:3000")
 public class CartController {
 	
-	@Autowired
-	private CartService cartService;
-	
-	/*View Cart
-		http://localhost:8080/api/cart/view/1            --> API Endpoint
-		*/
+
+	private final CartService cartService;
+
+    public CartController(CartService cartService) {
+        this.cartService = cartService;
+    }
+
+
+	// http://localhost:8080/api/cart/view/1
 	@GetMapping("/view/{customerId}")
-	public Cart viewCart(@PathVariable Long customerId) {
-		return cartService.viewCart(customerId);
+	public ResponseEntity<CartResponseDto> viewCart(@PathVariable Long customerId) {
+		return new ResponseEntity<>(cartService.viewCart(customerId), HttpStatus.OK);
 	}
-	
-	/*
-	 * add Product to Cart
-		http://localhost:8080/api/cart/1/add?productId=5&quantity=2           --> API Endpoint
-	*/
+
+	// http://localhost:8080/api/cart/1/add?productId=5&quantity=2
 	@PostMapping("/{customerId}/add")
-	public Cart addProductToCart(@PathVariable Long customerId,@RequestParam Long productId, @RequestParam int quantity) {
-		return cartService.addProductToCart(customerId, productId, quantity);
+	public ResponseEntity<CartResponseDto> addProductToCart(@PathVariable Long customerId,
+											@RequestParam Long productId,
+											@RequestParam int quantity) {
+		return new ResponseEntity<>(
+				cartService.addProductToCart(customerId, productId, quantity),
+				HttpStatus.OK);
 	}
 	
-	/*remove Product from Cart
-	 * 	 http://localhost:8080/api/cart/customer/1/removeProduct?productId=5		   										--> API Endpoint	
-	*/
+
+	//http://localhost:8080/api/cart/customer/1/removeProduct?productId=5		   										--> API Endpoint
 	@DeleteMapping("/customer/{customerId}/removeProduct")
-	public Cart removeProductFromCart(@PathVariable Long customerId,@RequestParam Long productId) {
-		return cartService.removeProductFromCart(customerId, productId);
+	public ResponseEntity<CartResponseDto> removeProductFromCart(@PathVariable Long customerId,@RequestParam Long productId) {
+		return new ResponseEntity<>(cartService.removeProductFromCart(customerId, productId), HttpStatus.OK);
 	}
 	
-	/*Update Product Quantity in Cart
-			http://localhost:8080/api/cart/customer/1/updateQuantity?productId=5&quantity=3            --> API Endpoint
-	*/
+
+	//http://localhost:8080/api/cart/customer/1/updateQuantity?productId=5&quantity=3
 	@PutMapping("/customer/{customerId}/updateQuantity")
-	public Cart updateProQuantity(@PathVariable Long customerId, @RequestParam Long productId, @RequestParam int quantity) {
-		return cartService.updateProductQuantity(customerId, productId, quantity);
+	public ResponseEntity<CartResponseDto> updateProQuantity(@PathVariable Long customerId,
+															 @RequestParam Long productId,
+															 @RequestParam int quantity) {
+		CartResponseDto cartResponse = cartService.updateProductQuantity(customerId, productId, quantity);
+		return new ResponseEntity<>(cartResponse, HttpStatus.OK);
 	}
 	
-	/*Clear Cart
-	http://localhost:8080/api/cart/customer/1/clear		  
-	*/
+
+	// http://localhost:8080/api/cart/customer/1/clear
 	@DeleteMapping("/customer/{customerId}/clear")
-	public Cart clearCart(@PathVariable Long customerId) {
-		return cartService.clearCart(customerId);
+	public ResponseEntity<Cart >clearCart(@PathVariable Long customerId) {
+		return new ResponseEntity<>(cartService.clearCart(customerId),HttpStatus.OK);
 	}
 
 }
